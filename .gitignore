@@ -1,0 +1,6 @@
+/.metadata/
+/src/*.buildpath
+/src/*.project
+/php/src/.htaccess
+/src/.settings
+/src/planilha/planilha.csv
