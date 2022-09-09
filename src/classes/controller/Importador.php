@@ -13,14 +13,25 @@ class Importador
     }
 
 	public function upload() {
+        $sessao = new Sessao();
+        if($sessao->getNivelAcesso() != Sessao::NIVEL_ADM){
+            return;
+        }
         if(isset($_POST['enviar_planilha'])){
             if($_FILES['arquivo']['name'] != null){
                 if(!file_exists('uploads/')) {
                     mkdir('uploads/', 0777, true);
                 }	
             }
+            $name = "metas.csv";
+            if(isset($_POST['type'])) {
+                if($_POST['type'] == "acoes"){
+                    $name = "acoes.csv";
+                }
+            }
             
-            if(!move_uploaded_file($_FILES['arquivo']['tmp_name'], 'uploads/metas.csv'))
+            
+            if(!move_uploaded_file($_FILES['arquivo']['tmp_name'], 'uploads/'.$name))
             {
                 echo '
                 <div class="alert alert-danger" role="alert">
@@ -148,9 +159,10 @@ class Importador
             <input type="hidden" name="enviar_planilha" value="1">
             Utilize o formulário abaixo para sobrescrever o arquivo CSV.<br><br>  
             <div class="custom-file">
-              <input type="file" class="custom-file-input" name="arquivo" id="arquivo" accept=".csv">
+              <input type="file" class="custom-file-input" name="arquivo" id="arquivo_metas" accept=".csv">
               <label class="custom-file-label" for="anexo" data-browse="Anexar">Planilha de Metas CSV </label>
             </div>
+            <input type="hidden" name="type" value="metas"/>
           </form>
         <button form="insert_form_planilha" type="submit" class="btn btn-primary m-4">Enviar</button>
 
@@ -158,17 +170,17 @@ class Importador
 </div>
 <div class="card m-5">
   <div class="card-body">
-    <form id="insert_form_planilha" class="user" method="post" enctype="multipart/form-data" >
+    <form id="insert_form_planilha_acoes" class="user" method="post" enctype="multipart/form-data" >
             <input type="hidden" name="enviar_planilha" value="1">
             Utilize o formulário abaixo para sobrescrever o arquivo CSV.<br><br>  
             <div class="custom-file">
-              <input disabled type="file" class="custom-file-input" name="arquivo" id="arquivo" accept=".csv">
-              <label class="custom-file-label" for="anexo" data-browse="Anexar">Planilha de Ações CSV </label>
+              <input type="file" class="custom-file-input" name="arquivo" id="arquivo_acoes" accept=".csv">
+              <label class="custom-file-label" for="arquivo_acoes" data-browse="Anexar">Planilha de Ações CSV </label>
             </div>
-
+            <input type="hidden" name="type" value="acoes"/>
 
           </form>
-        <button form="insert_form_planilha" type="submit" class="btn btn-primary m-4" disabled>Enviar</button>
+        <button form="insert_form_planilha_acoes" type="submit" class="btn btn-primary m-4">Enviar</button>
 
   </div>
 </div>

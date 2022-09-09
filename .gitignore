@@ -4,3 +4,6 @@
 /php/src/.htaccess
 /src/.settings
 /src/planilha/planilha.csv
+src/uploads/planilha.csv
+.gitignore
+src/uploads/acoes.csv
