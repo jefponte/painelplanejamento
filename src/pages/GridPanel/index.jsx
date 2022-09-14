@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { Container, Typography } from "@mui/material";
 import Box from '@mui/material/Box';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
+import { Modal } from "@mui/material";
 
 
 
@@ -15,14 +17,35 @@ const columns = [
   {  field: 'percentual', headerName: "Percentual", width: 300}, 
   {  field: 'descricaoMeta', headerName: "Descrição da Meta", width: 300}, 
   {  field: 'prazo', headerName: "Prazo", width: 300}, 
-  {  field: 'unidadeResponsavel', headerName: "Unidade Responsavel", width: 300}, 
+  {  field: 'unidadeResponsavel', headerName: "Unidade Responsavel", width: 200}, 
   {  field: 'unidadeCoResponsavel', headerName: "Unidade Co-Responsavel", width: 300}
 ];
 
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+
 export default function GridPanel() {
   const [goals, setGoals] = useState([]);
-  
+  const [open, setOpen] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState(null);
+
+  const handleOpen = (params) => {
+    setSelectedGoal(params?.row);
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
+
   const fetchGoals = async () => {
     try {
       const res = await fetch('https://sheetdb.io/api/v1/bj9pvb123v2kw');
@@ -38,14 +61,31 @@ export default function GridPanel() {
 
 
 
+
   return (
     <Box sx={{ height: 520, width: '100%' }}>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Meta Institucional Nº {selectedGoal?.id}
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          {selectedGoal?.descricaoMeta}
+          </Typography>
+        </Box>
+      </Modal>
       <DataGrid
         rows={goals}
         columns = {columns}
         loading={goals.length === 0}
         rowHeight={40}
         localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+        onCellClick={handleOpen}
       />
     </Box>
   );
