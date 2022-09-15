@@ -2,7 +2,6 @@ import { Container, Typography } from "@mui/material";
 import React from "react";
 import GridPanel from "../GridPanel";
 import imagem from "../../assets/img/logo-proplan.png";
-import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';

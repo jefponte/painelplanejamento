@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Container, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import Box from '@mui/material/Box';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { Modal } from "@mui/material";
+import ListActions from "../../components/ListActions";
+import { fetchData } from "../../services/api";
 
 
 
@@ -46,17 +48,8 @@ export default function GridPanel() {
   };
   const handleClose = () => setOpen(false);
 
-  const fetchGoals = async () => {
-    try {
-      const res = await fetch('https://sheetdb.io/api/v1/bj9pvb123v2kw');
-      const data = await res.json();
-      setGoals(data);
-    } catch(error) {
-
-    }
-  }
   useEffect(() => {
-    fetchGoals()
+    fetchData(setGoals);
   }, []);
 
 
@@ -77,6 +70,7 @@ export default function GridPanel() {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           {selectedGoal?.descricaoMeta}
           </Typography>
+          <ListActions acoes={selectedGoal?.acoes}/>
         </Box>
       </Modal>
       <DataGrid
