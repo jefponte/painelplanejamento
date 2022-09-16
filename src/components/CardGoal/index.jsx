@@ -34,7 +34,20 @@ export default function CardGoal(props) {
             <Typography sx={{ mb: 1.5 }} color="text.secondary">
               {goal?.classificacaoObjeto}
             </Typography>
+
+            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+              {goal?.percentual}
+            </Typography>
+            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+              {goal?.classificacaoObjeto}
+            </Typography>
             
+            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+              {goal?.unidadeResponsavel}
+            </Typography>
+            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+              {goal?.unidadeCoResponsavel}
+            </Typography>
           </CardContent>
           
         </React.Fragment>
