@@ -19,7 +19,7 @@ function PageGoalSelected() {
 
   useEffect(() => {
     fetchSelected(setSelectedGoal, id);
-  }, []);
+  }, [id]);
   return (
     <Container maxWidth={"lg"}>
       <br/>
