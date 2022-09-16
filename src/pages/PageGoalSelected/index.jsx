@@ -9,6 +9,7 @@ import CardMedia from '@mui/material/CardMedia';
 import { useState } from "react";
 import { useEffect } from "react";
 import { fetchSelected } from "../../services/api";
+import CardGoal from "../../components/CardGoal";
 
 
 function PageGoalSelected() {
@@ -43,7 +44,7 @@ function PageGoalSelected() {
           />
         </Box>
       </Card>
-      {console.log(selectedGoal)}
+      <CardGoal goal={selectedGoal}/>
     </Container>
   );
 }
