@@ -5,7 +5,7 @@ import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { Modal } from "@mui/material";
 import ListActions from "../../components/ListActions";
 import { fetchData } from "../../services/api";
-
+import { Link } from "react-router-dom";
 
 
 const columns = [
@@ -64,9 +64,12 @@ export default function GridPanel() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
+        <Link to={`/meta/${selectedGoal?.id}`}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Meta Institucional Nº {selectedGoal?.id}
           </Typography>
+        </Link>
+          
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           {selectedGoal?.descricaoMeta}
           </Typography>

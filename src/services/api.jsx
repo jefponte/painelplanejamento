@@ -15,7 +15,6 @@ export const fetchData = async (setData) => {
   const responseActions = await apiActions.get();
   const goals = tsvToJSON(responseGoal.data);
   const actions = tsvToJSON(responseActions.data);
-  console.log(goals);
   goals.map((goal) => {
     goal.acoes = [];
     actions.map((acao) => {
@@ -23,11 +22,35 @@ export const fetchData = async (setData) => {
         goal.acoes.push(acao);
       }
       return acao;
-
     });
     return goal;
   });
   setData(goals);
+};
+
+export const fetchSelected = async (setSelected, id) => {
+  const responseGoal = await apiGoal.get();
+  const responseActions = await apiActions.get();
+  const goals = tsvToJSON(responseGoal.data);
+  const actions = tsvToJSON(responseActions.data);
+  var selected = null;
+  goals.map((goal) => {
+    goal.acoes = [];
+    actions.map((acao) => {
+      if (acao.idMeta === goal.id) {
+        goal.acoes.push(acao);
+      }
+      return acao;
+    });
+    return goal;
+  });
+  goals.map((goal) => {
+    if (id === goal.id) {
+      selected = goal;
+    }
+    return goal;
+  });
+  setSelected(selected);
 };
 
 function tsvToJSON(csv) {
