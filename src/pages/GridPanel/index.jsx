@@ -3,24 +3,28 @@ import { Typography } from "@mui/material";
 import Box from '@mui/material/Box';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { Modal } from "@mui/material";
-import ListActions from "../../components/ListActions";
 import { fetchData } from "../../services/api";
 import { Link } from "react-router-dom";
-
+import Divider from '@mui/material/Divider';
+import MenuList from '@mui/material/MenuList';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import { Search } from "@material-ui/icons";
 
 const columns = [
-  {  field: 'id', headerName: "Nº", width: 25},
-  {  field: 'classificacaoObjeto', headerName: "Classificação do Objeto", width: 200},
-  {  field: 'objetivo', headerName: "Objetivo", width: 200}, 
-  {  field: 'classificacaoIndicador', headerName: "Classificação do Indicador", width: 250}, 
-  {  field: 'categoriaIndicador', headerName: "Categoria do Indicador"},
-  {  field: 'tipo', headerName: "Tipo de Indicador"}, 
-  {  field: 'descricao', headerName: "Descrição", width: 300}, 
-  {  field: 'percentual', headerName: "Percentual", width: 300}, 
-  {  field: 'descricaoMeta', headerName: "Descrição da Meta", width: 300}, 
-  {  field: 'prazo', headerName: "Prazo", width: 300}, 
-  {  field: 'unidadeResponsavel', headerName: "Unidade Responsavel", width: 200}, 
-  {  field: 'unidadeCoResponsavel', headerName: "Unidade Co-Responsavel", width: 300}
+  { field: 'id', headerName: "Nº", width: 25 },
+  { field: 'classificacaoObjetivo', headerName: "Classificação do Objetivo", width: 200 },
+  { field: 'objetivo', headerName: "Objetivo", width: 200 },
+  { field: 'classificacaoIndicador', headerName: "Classificação do Indicador", width: 250 },
+  { field: 'categoriaIndicador', headerName: "Categoria do Indicador" },
+  { field: 'tipo', headerName: "Tipo de Indicador" },
+  { field: 'descricao', headerName: "Descrição", width: 300 },
+  { field: 'percentual', headerName: "Percentual", width: 300 },
+  { field: 'descricaoMeta', headerName: "Descrição da Meta", width: 300 },
+  { field: 'prazo', headerName: "Prazo", width: 300 },
+  { field: 'unidadeResponsavel', headerName: "Unidade Responsavel", width: 200 },
+  { field: 'unidadeCoResponsavel', headerName: "Unidade Co-Responsavel", width: 300 }
 ];
 
 
@@ -64,21 +68,33 @@ export default function GridPanel() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-        <Link to={`/meta/${selectedGoal?.id}`}>
+
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Meta Institucional Nº {selectedGoal?.id}
           </Typography>
-        </Link>
-          
+
+
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          {selectedGoal?.descricaoMeta}
+            {selectedGoal?.descricaoMeta}
           </Typography>
-          <ListActions acoes={selectedGoal?.acoes}/>
+          <MenuList>
+
+            <Divider />
+            <Link to={`/meta/${selectedGoal?.id}`}>
+              <MenuItem>
+                <ListItemIcon>
+                  <Search fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Ver Detalhes</ListItemText>
+              </MenuItem>
+            </Link>
+          </MenuList>
+
         </Box>
       </Modal>
       <DataGrid
         rows={goals}
-        columns = {columns}
+        columns={columns}
         loading={goals.length === 0}
         rowHeight={40}
         localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
