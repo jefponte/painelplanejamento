@@ -8,11 +8,17 @@ import { ptBR } from '@material-ui/core/locale';
 
 function App() {
 
+  
+  
   const theme = createTheme({
     status: {
       danger: '#e53e3e',
     },
     palette: {
+      background: {
+ 
+        paper: '#F5F6F9',
+      },
       primary: {
         main: '#3b0304',
         darker: '#3b0304',
@@ -24,6 +30,9 @@ function App() {
       },
     }, 
 }, ptBR);
+
+
+
 
   return (
     <ThemeProvider theme={theme}>

@@ -21,7 +21,7 @@ export default function CardGoal(props) {
                 Meta institucional: Nº{goal?.id}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                {goal?.descricaoMeta}
+                {goal?.descricao}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
                Prazo: {goal?.prazo}
@@ -69,10 +69,10 @@ export default function CardGoal(props) {
                Categoria: {goal?.categoriaIndicador}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-               Tipo: {goal?.tipo}
+               Tipo: {goal?.tipoIndicador}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Descricao: {goal?.descricao}
+                Descricao: {goal?.descricaoIndicador}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
                 Percentual: {goal?.percentual}

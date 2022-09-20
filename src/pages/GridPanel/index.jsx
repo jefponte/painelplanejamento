@@ -18,10 +18,10 @@ const columns = [
   { field: 'objetivo', headerName: "Objetivo", width: 200 },
   { field: 'classificacaoIndicador', headerName: "Classificação do Indicador", width: 250 },
   { field: 'categoriaIndicador', headerName: "Categoria do Indicador" },
-  { field: 'tipo', headerName: "Tipo de Indicador" },
-  { field: 'descricao', headerName: "Descrição", width: 300 },
+  { field: 'tipoIndicador', headerName: "Tipo de Indicador" },
+  { field: 'descricaoIndicador', headerName: "Descrição do Indicador", width: 300 },
   { field: 'percentual', headerName: "Percentual", width: 300 },
-  { field: 'descricaoMeta', headerName: "Descrição da Meta", width: 300 },
+  { field: 'descricao', headerName: "Descrição da Meta", width: 300 },
   { field: 'prazo', headerName: "Prazo", width: 300 },
   { field: 'unidadeResponsavel', headerName: "Unidade Responsavel", width: 200 },
   { field: 'unidadeCoResponsavel', headerName: "Unidade Co-Responsavel", width: 300 }
@@ -75,7 +75,7 @@ export default function GridPanel() {
 
 
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            {selectedGoal?.descricaoMeta}
+            {selectedGoal?.descricao}
           </Typography>
           <MenuList>
 
@@ -89,6 +89,7 @@ export default function GridPanel() {
               </MenuItem>
             </Link>
           </MenuList>
+          
 
         </Box>
       </Modal>
