@@ -10,11 +10,28 @@ import {
   Typography,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Box from '@mui/material/Box';
+import ListItemButton from '@mui/material/ListItemButton';
+import { useState } from 'react';
+import ModalAction from '../ModalAction';
 
 export default function CardActions(props) {
   const acoes = props.acoes || [];
-
+  const [actionSelected, setActionSelected] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  if (acoes.length === 0) {
+    return <></>;
+  }
+  const handleActionClick = (acao) => {
+    setActionSelected(acao);
+    setModalOpen(true);
+  }
+  const handleClose =  () => {
+    setModalOpen(false);
+  }
   return (
+    <React.Fragment>
+      <ModalAction handleClose={handleClose} action={actionSelected} open={modalOpen}/>
     <Accordion>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
@@ -24,57 +41,33 @@ export default function CardActions(props) {
         <Typography>Ações</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-          {acoes.map((acao) => {
-            return (
-              <React.Fragment key={acao.id}>
-                <ListItem alignItems="flex-start">
-                  <ListItemText
-                    primary={acao?.acao}
-                    secondary={
-                      <React.Fragment>
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="body2"
-                          color="text.primary"
-                        >
-                          Nivel: {acao?.nivel} 
-                        </Typography><br/>
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="body2"
-                          color="text.primary"
-                        >
-                            Recursos: {acao?.recursosAcao}
-                        </Typography>
-                        <br/>
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="body2"
-                          color="text.primary"
-                        >
-                            Unidade Responsável: {acao?.unidadeResponsavel}
-                        </Typography>
 
-                      </React.Fragment>
-                    }
-                  />
-                </ListItem>
-                <Divider />
-              </React.Fragment>
-            );
-          })}
+        <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+
+          <Divider />
+          <nav aria-label="secondary mailbox folders">
+            <List>
+              {acoes.map((acao) => {
+                return (
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemText onClick={() => {
+                        handleActionClick(acao)
+                      }} primary={acao.acao} />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
 
 
+            </List>
+          </nav>
+        </Box>
 
-        </List>
       </AccordionDetails>
     </Accordion>
 
-
+    </React.Fragment>
 
   );
 }

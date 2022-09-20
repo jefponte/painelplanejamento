@@ -36,9 +36,11 @@ function PagePanel() {
             alt="Logo Proplan"
           />
         </Box>
-      </Card>
-
-      <GridPanel />
+        </Card>
+        <Card variant="outlined">
+          <GridPanel />  
+        </Card>
+      
     </Container>
   );
 }
