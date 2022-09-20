@@ -49,7 +49,7 @@ export default function CardActions(props) {
             <List>
               {acoes.map((acao) => {
                 return (
-                  <ListItem disablePadding>
+                  <ListItem disablePadding key={acao.id}>
                     <ListItemButton>
                       <ListItemText onClick={() => {
                         handleActionClick(acao)
