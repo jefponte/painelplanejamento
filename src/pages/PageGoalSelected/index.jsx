@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { useState } from "react";
 import { useEffect } from "react";
 import { fetchSelected } from "../../services/api";
-import CardGoal from "../../components/CardGoal";
+import  PanelGoal from "../../components/PanelGoal";
 import PanelTitle from "../../components/PanelTitle";
 
 
@@ -19,7 +19,7 @@ function PageGoalSelected() {
   return (
     <Container maxWidth={"lg"}>
       <PanelTitle/>
-      <CardGoal goal={selectedGoal}/>
+      <PanelGoal goal={selectedGoal}/>
     </Container>
   );
 }

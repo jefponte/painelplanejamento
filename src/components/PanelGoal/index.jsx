@@ -5,14 +5,24 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Grid } from '@mui/material';
 import CardActions from '../CardActions';
+import CustomizedProgressBars from '../CustomizedProgressBars';
+import CardLoad from '../CardLoad';
 
 
 
-export default function CardGoal(props) {
+
+export default function PanelGoal(props) {
   const goal = props.goal || null;
+  if (goal === null) {
+    return (
+      <>
+        <CardLoad/>
+      </>
+    );
+  }
   return (
     <Box sx={{ minWidth: 275 }}>
-      <br/>
+      <br />
       <Grid container spacing={4}>
         <Grid item xl={4} lg={4} md={4} sm={12} xs={12}>
           <Card>
@@ -24,18 +34,18 @@ export default function CardGoal(props) {
                 {goal?.descricao}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-               Prazo: {goal?.prazo}
+                Prazo: {goal?.prazo}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-               Unidade Responsável: {goal?.unidadeResponsavel}
+                Unidade Responsável: {goal?.unidadeResponsavel}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-               Unidade co-responsável: {goal?.unidadeCoResponsavel}
+                Unidade co-responsável: {goal?.unidadeCoResponsavel}
               </Typography>
             </CardContent>
           </Card>
 
-          <br/><CardActions acoes={goal?.acoes} />
+          <br /><CardActions acoes={goal?.acoes} />
         </Grid>
 
 
@@ -49,9 +59,9 @@ export default function CardGoal(props) {
                 {goal?.objetivo}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-               Classificação: {goal?.classificacaoObjetivo}
+                Classificação: {goal?.classificacaoObjetivo}
               </Typography>
-              
+
             </CardContent>
           </Card>
         </Grid>
@@ -66,22 +76,23 @@ export default function CardGoal(props) {
                 Classificação:  {goal?.classificacaoIndicador}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-               Categoria: {goal?.categoriaIndicador}
+                Categoria: {goal?.categoriaIndicador}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-               Tipo: {goal?.tipoIndicador}
+                Tipo: {goal?.tipoIndicador}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
                 Descricao: {goal?.descricaoIndicador}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Percentual: {goal?.percentual}
+                Percentual: {goal?.percentual}%
               </Typography>
+              <CustomizedProgressBars progress={parseInt(goal?.percentual)} />
             </CardContent>
           </Card>
         </Grid>
 
-       
+
 
 
 

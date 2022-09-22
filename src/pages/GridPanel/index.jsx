@@ -3,7 +3,7 @@ import { Typography } from "@mui/material";
 import Box from '@mui/material/Box';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { Modal } from "@mui/material";
-import { fetchData } from "../../services/api";
+import { fetchData, columns } from "../../services/api";
 import { Link } from "react-router-dom";
 import Divider from '@mui/material/Divider';
 import MenuList from '@mui/material/MenuList';
@@ -11,21 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { Search } from "@material-ui/icons";
-
-const columns = [
-  { field: 'id', headerName: "Nº", width: 25 },
-  { field: 'classificacaoObjetivo', headerName: "Classificação do Objetivo", width: 200 },
-  { field: 'objetivo', headerName: "Objetivo", width: 200 },
-  { field: 'classificacaoIndicador', headerName: "Classificação do Indicador", width: 250 },
-  { field: 'categoriaIndicador', headerName: "Categoria do Indicador" },
-  { field: 'tipoIndicador', headerName: "Tipo de Indicador" },
-  { field: 'descricaoIndicador', headerName: "Descrição do Indicador", width: 300 },
-  { field: 'percentual', headerName: "Percentual", width: 300 },
-  { field: 'descricao', headerName: "Descrição da Meta", width: 300 },
-  { field: 'prazo', headerName: "Prazo", width: 300 },
-  { field: 'unidadeResponsavel', headerName: "Unidade Responsavel", width: 200 },
-  { field: 'unidadeCoResponsavel', headerName: "Unidade Co-Responsavel", width: 300 }
-];
+import CustomizedProgressBars from "../../components/CustomizedProgressBars";
 
 
 const style = {
@@ -56,9 +42,6 @@ export default function GridPanel() {
     fetchData(setGoals);
   }, []);
 
-
-
-
   return (
     <Box sx={{ height: 520, width: '100%' }}>
       <Modal
@@ -78,7 +61,8 @@ export default function GridPanel() {
             {selectedGoal?.descricao}
           </Typography>
           <MenuList>
-
+            Progresso: {parseInt(selectedGoal?.percentual)}%
+            <CustomizedProgressBars progress={parseInt(selectedGoal?.percentual)}/>
             <Divider />
             <Link to={`/meta/${selectedGoal?.id}`}>
               <MenuItem>
@@ -97,7 +81,7 @@ export default function GridPanel() {
         rows={goals}
         columns={columns}
         loading={goals.length === 0}
-        rowHeight={40}
+        rowHeight={80}
         localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
         onCellClick={handleOpen}
       />
