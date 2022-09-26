@@ -1,5 +1,4 @@
-import { AppBar, Toolbar } from "@material-ui/core";
-import React from "react";
+import { AppBar, Toolbar } from "@mui/material";
 import Image from "../../assets/img/bg-topo.png";
 import LogoUNILAB from "../../assets/img/logo-unilab.png";
 import styled from "styled-components";

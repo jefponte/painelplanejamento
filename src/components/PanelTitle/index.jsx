@@ -8,11 +8,11 @@ export default function PanelTitle() {
     <br />
         <Grid container spacing={2}>
             <Grid item xs={12} md={9}>
-                <Typography component="div" variant="h5">
-                    Painel de Acompanhamento de Metas e Ações
+                <Typography component="h4" variant="h4">
+                    Painel de Acompanhamento do Planejamento da UNILAB
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary" component="div">
-                    Este painel possui a lista de metas institucionais e as ações a serem tomadas para realizar tais ações.
+                Este painel ainda está em construção e essas metas abaixo são a titulo de exemplo.
                 </Typography>
             </Grid>
             <Grid item  xs={12} md={3}>

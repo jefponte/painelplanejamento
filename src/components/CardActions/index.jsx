@@ -8,7 +8,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Box from '@mui/material/Box';
 import ListItemButton from '@mui/material/ListItemButton';

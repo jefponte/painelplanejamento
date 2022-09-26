@@ -31,11 +31,11 @@ export const columns = [
 
 
 export const apiGoal = axios.create({
-  baseURL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9IXDVbwRx3xfvF-42G10RTTOaLij_1jXqxXzRkHRDty9FXt8woRA-o8SoJZYkrFboM9bSKz5odDVH/pub?gid=1829753978&single=true&output=tsv'
+  baseURL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vStX5cfx1d7sfdXK-GBpSUzFJvCM2hdJgT76XqWcgHRBqYxh5-oSKBNGbuITzGy52J2SLfq_s4DpsNH/pub?gid=0&single=true&output=tsv'
 }
 );
 export const apiActions = axios.create({
-  baseURL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9IXDVbwRx3xfvF-42G10RTTOaLij_1jXqxXzRkHRDty9FXt8woRA-o8SoJZYkrFboM9bSKz5odDVH/pub?gid=1341425563&single=true&output=tsv'
+  baseURL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vStX5cfx1d7sfdXK-GBpSUzFJvCM2hdJgT76XqWcgHRBqYxh5-oSKBNGbuITzGy52J2SLfq_s4DpsNH/pub?gid=589576948&single=true&output=tsv'
 }
 );
 

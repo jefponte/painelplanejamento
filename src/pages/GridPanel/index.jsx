@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
-import Box from '@mui/material/Box';
+import { Typography, Box, Modal } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
-import { Modal } from "@mui/material";
 import { fetchData, columns } from "../../services/api";
 import { Link } from "react-router-dom";
 import Divider from '@mui/material/Divider';
@@ -10,7 +8,7 @@ import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { Search } from "@material-ui/icons";
+import { Search } from "@mui/icons-material";
 import CustomizedProgressBars from "../../components/CustomizedProgressBars";
 
 
