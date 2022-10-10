@@ -3,10 +3,11 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Grid } from '@mui/material';
+import { Grid, Link } from '@mui/material';
 import CardActions from '../CardActions';
 import CardLoad from '../CardLoad';
 import LinearProgressWithLabel from '../LinearProgressWithLabel';
+
 
 
 
@@ -42,6 +43,10 @@ export default function PanelGoal(props) {
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
                 Unidade co-responsável: {goal?.unidadeCoResponsavel}
               </Typography>
+              <Link href="/" underline="hover">
+                Retornar ao Painel
+              </Link>
+
             </CardContent>
           </Card>
 
