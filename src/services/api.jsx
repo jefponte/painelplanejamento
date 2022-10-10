@@ -15,12 +15,11 @@ export const columns = [
     field: 'percentualBarr', headerName: "Progresso", width: 250,
     renderCell: (cellValues) => {
       return (<>
-        {/* <CustomizedProgressBars progress={cellValues.row.percentual} /> */}
           <LinearProgressWithLabel value={cellValues.row.percentual}/>
         </>);
     }
   },
-  { field: 'prazo', headerName: "Prazo", width: 250 },
+  { field: 'prazo', headerName: "Prazo", width: 100 },
   { field: 'unidadeResponsavel', headerName: "Unidade Responsavel", width: 200 },
   { field: 'unidadeCoResponsavel', headerName: "Unidade Co-Responsavel", width: 250 }
 ];
