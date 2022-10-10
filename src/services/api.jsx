@@ -12,7 +12,7 @@ export const columns = [
   { field: 'descricaoIndicador', headerName: "Descrição do Indicador", width: 250 },
   { field: 'descricao', headerName: "Descrição da Meta", width: 250 },
   {
-    field: 'percentualBarr', headerName: "Progresso", width: 250,
+    field: 'percentual', headerName: "Progresso", width: 250,
     renderCell: (cellValues) => {
       return (<>
           <LinearProgressWithLabel value={cellValues.row.percentual}/>
