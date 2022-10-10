@@ -6,17 +6,11 @@ export const columns = [
   { field: 'id', headerName: "Nº", width: 25 },
   { field: 'classificacaoObjetivo', headerName: "Classificação do Objetivo", width: 200 },
   { field: 'objetivo', headerName: "Objetivo", width: 200 },
-  { field: 'classificacaoIndicador', headerName: "Classificação do Indicador", width: 250 },
+  { field: 'classificacaoIndicador', headerName: "Classificação do Indicador", width: 200 },
   { field: 'categoriaIndicador', headerName: "Categoria do Indicador" },
   { field: 'tipoIndicador', headerName: "Tipo de Indicador" },
   { field: 'descricaoIndicador', headerName: "Descrição do Indicador", width: 250 },
   { field: 'descricao', headerName: "Descrição da Meta", width: 250 },
-  {
-    field: 'percentual', headerName: "Percentual", width: 100,
-    renderCell: (cellValues) => {
-      return (<>{cellValues.row.percentual}%</>);
-    }
-  },
   {
     field: 'percentualBarr', headerName: "Progresso", width: 250,
     renderCell: (cellValues) => {
