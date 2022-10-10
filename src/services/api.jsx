@@ -10,6 +10,7 @@ export const columns = [
   { field: 'categoriaIndicador', headerName: "Categoria do Indicador" },
   { field: 'tipoIndicador', headerName: "Tipo de Indicador" },
   { field: 'descricaoIndicador', headerName: "Descrição do Indicador", width: 250 },
+  { field: 'descricao', headerName: "Descrição da Meta", width: 250 },
   {
     field: 'percentual', headerName: "Percentual", width: 100,
     renderCell: (cellValues) => {
@@ -23,7 +24,6 @@ export const columns = [
         <CustomizedProgressBars progress={cellValues.row.percentual} /></>);
     }
   },
-  { field: 'descricao', headerName: "Descrição da Meta", width: 250 },
   { field: 'prazo', headerName: "Prazo", width: 250 },
   { field: 'unidadeResponsavel', headerName: "Unidade Responsavel", width: 200 },
   { field: 'unidadeCoResponsavel', headerName: "Unidade Co-Responsavel", width: 250 }
