@@ -9,7 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { Search } from "@mui/icons-material";
-import CustomizedProgressBars from "../../components/CustomizedProgressBars";
+import LinearProgressWithLabel from "../../components/LinearProgressWithLabel";
 
 
 const style = {
@@ -59,8 +59,9 @@ export default function GridPanel() {
             {selectedGoal?.descricao}
           </Typography>
           <MenuList>
-            Progresso: {parseInt(selectedGoal?.percentual)}%
-            <CustomizedProgressBars progress={parseInt(selectedGoal?.percentual)}/>
+            
+            <LinearProgressWithLabel value={parseInt(selectedGoal?.percentual)}/>
+            
             <Divider />
             <Link to={`/meta/${selectedGoal?.id}`}>
               <MenuItem>

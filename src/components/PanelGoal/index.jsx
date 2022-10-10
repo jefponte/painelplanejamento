@@ -5,8 +5,8 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Grid } from '@mui/material';
 import CardActions from '../CardActions';
-import CustomizedProgressBars from '../CustomizedProgressBars';
 import CardLoad from '../CardLoad';
+import LinearProgressWithLabel from '../LinearProgressWithLabel';
 
 
 
@@ -84,10 +84,7 @@ export default function PanelGoal(props) {
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
                 Descricao: {goal?.descricaoIndicador}
               </Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Percentual: {goal?.percentual}%
-              </Typography>
-              <CustomizedProgressBars progress={parseInt(goal?.percentual)} />
+              <LinearProgressWithLabel value={parseInt(goal?.percentual)} />
             </CardContent>
           </Card>
         </Grid>

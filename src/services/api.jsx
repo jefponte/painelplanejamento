@@ -1,5 +1,5 @@
 import axios from "axios";
-import CustomizedProgressBars from "../components/CustomizedProgressBars";
+import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 
 
 export const columns = [
@@ -15,7 +15,9 @@ export const columns = [
     field: 'percentualBarr', headerName: "Progresso", width: 250,
     renderCell: (cellValues) => {
       return (<>
-        <CustomizedProgressBars progress={cellValues.row.percentual} /></>);
+        {/* <CustomizedProgressBars progress={cellValues.row.percentual} /> */}
+          <LinearProgressWithLabel value={cellValues.row.percentual}/>
+        </>);
     }
   },
   { field: 'prazo', headerName: "Prazo", width: 250 },
