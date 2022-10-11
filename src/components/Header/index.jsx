@@ -11,6 +11,13 @@ import { AppBar, Toolbar } from "@mui/material";
 import Image from "../../assets/img/bg-topo.png";
 import LogoUNILAB from "../../assets/img/logo-unilab.png";
 import styled from "styled-components";
+import Link from '@mui/material/Link';
+
+
+import Modal from '@mui/material/Modal';
+
+
+
 
 const ImageLogo = styled(({ color, ...otherProps }) => <img alt="Logo UNILAB" src={LogoUNILAB} {...otherProps} />)`
   width: 300px;
@@ -24,11 +31,28 @@ const styles = {
 };
 
 
-const pages = ['Início', 'Sobre', 'Contato'];
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 
 const Header = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [openAbout, setOpenAbout] = React.useState(false);
+  const handleOpenAbout = () => setOpenAbout(true);
+  const handleCloseAbout = () => setOpenAbout(false);
+
+  const [openContact, setOpenContact] = React.useState(false);
+  const handleOpenContact = () => setOpenContact(true);
+  const handleCloseContact = () => setOpenContact(false);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -41,8 +65,8 @@ const Header = () => {
     <AppBar position="static" style={styles.paperContainer}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <ImageLogo/>
-          
+          <ImageLogo />
+
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
@@ -73,30 +97,85 @@ const Header = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+              <Link href="/">
+                <MenuItem>
+                  <Typography textAlign="center">Início</Typography>
                 </MenuItem>
-              ))}
+              </Link>
+              
+
+              <MenuItem onClick={handleOpenAbout}>
+                <Typography textAlign="center">Sobre</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleOpenContact}>
+                <Typography textAlign="center">Contato</Typography>
+              </MenuItem>
             </Menu>
           </Box>
-          
-          
+
+
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+            <Link href="/">
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                Início
               </Button>
-            ))}
+            </Link>
+            <Button
+              onClick={handleOpenAbout}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Sobre
+            </Button>
+            <Button
+              onClick={handleOpenContact}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Contato
+            </Button>
+
           </Box>
 
-         
+
         </Toolbar>
       </Container>
+
+
+      <Modal
+        open={openAbout}
+        onClose={handleCloseAbout}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Sobre
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Informações sobre o painel
+          </Typography>
+        </Box>
+      </Modal>
+
+
+
+      <Modal
+        open={openContact}
+        onClose={handleCloseContact}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Contato
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Informação de contato
+          </Typography>
+        </Box>
+      </Modal>
+
     </AppBar>
   );
 };
