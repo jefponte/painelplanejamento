@@ -41,7 +41,7 @@ export default function GridPanel() {
   }, []);
 
   return (
-    <Box sx={{ height: 520, width: '100%' }}>
+    <Box sx={{ height: 450, width: '100%' }}>
       <Modal
         open={open}
         onClose={handleClose}
@@ -80,7 +80,7 @@ export default function GridPanel() {
         rows={goals}
         columns={columns}
         loading={goals.length === 0}
-        rowHeight={80}
+        rowHeight={74}
         localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
         onCellClick={handleOpen}
       />
