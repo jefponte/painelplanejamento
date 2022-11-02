@@ -12,7 +12,7 @@ export default function PanelTitle() {
                     Painel de Acompanhamento do Planejamento da UNILAB
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary" component="div">
-                Este painel ainda está em construção e essas metas abaixo são a titulo de exemplo.
+                Painel gerencial para acompanhamento do planejamento institucional destinado aos gestores da UNILAB e para transparência pública.
                 </Typography>
             </Grid>
             <Grid item  xs={12} md={3}>
