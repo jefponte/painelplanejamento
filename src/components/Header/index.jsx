@@ -152,7 +152,7 @@ const Header = () => {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Sobre
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <Typography id="modal-modal-description" align="center"  sx={{ mt: 2 }}>
             Painel desenvolvido em parceria entre PROPLAN e DTI para o acompanhamento das metas e ações da UNILAB, nos níveis táticos e operacionais, a partir dos objetivos estratégicos presentes no PDI (Plano de Desenvolvimento Institucional) vigente.
           </Typography>
         </Box>
@@ -167,11 +167,11 @@ const Header = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+          <Typography id="modal-modal-title" align="center" variant="h6" component="h2">
               Dúvidas e ou Sugestões?
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Encaminhe aqui sua mensagem ou por meio do e-mail: painelplanejamento@unilab.edu.br.
+          <Typography id="modal-modal-description" align="center" sx={{ mt: 2 }}>
+            Encaminhe sua mensagem por este e-maill: painelplanejamento@unilab.edu.br.
           </Typography>
         </Box>
       </Modal>
