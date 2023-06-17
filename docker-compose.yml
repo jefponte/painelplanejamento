@@ -7,7 +7,7 @@
 # docker push dti-registro.unilab.edu.br/unilab/painelplanejamento:latest
 #
 # Compose V2 para compose V1 use 'docker-compose' :
-# docker compose up -d
+# docker compose -f docker-compose.yml up --build -d
 # docker compose logs -f
 # docker exec -it painelplanejamento-debug /bin/bash
 # docker compose down
@@ -33,7 +33,7 @@ services:
       - "37389:22"
     networks:
       - developer
-      
+
 volumes:
   postgresql_data:
     driver: local
