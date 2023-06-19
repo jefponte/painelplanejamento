@@ -5,17 +5,17 @@
 # Description: Este Dockerfile cria uma imagem para Microsserviço, um aplicativo da Web escrito em React.
 #
 # Build instructions:
-#   docker build -t dti-registro.unilab.edu.br/unilab/painelplanejamento:latest --build-arg VERSION=1.0.0 --build-arg COMMIT_SHA=$(git rev-parse --short HEAD) .
-#   docker push dti-registro.unilab.edu.br/unilab/painelplanejamento:latest
+#   docker build -f ./Dockerfile -t dti-registro.unilab.edu.br/unilab/painelplanunilab:latest --build-arg VERSION=1.0.0 --build-arg COMMIT_SHA=$(git rev-parse --short HEAD) --no-cache ./source/
+#   docker push dti-registro.unilab.edu.br/unilab/painelplanunilab:latest
 #
 # Usage:
 #
-#   docker run -it --rm -d -p 8088:80 --name painelplanejamento dti-registro.unilab.edu.br/unilab/painelplanejamento:latest
+#   docker run -it --rm -d -p 8088:80 --name painelplanejamento dti-registro.unilab.edu.br/unilab/painelplanunilab:latest
 #   docker logs -f --tail --until=2s painelplanejamento
 #   docker exec -it painelplanejamento bash
-#   docker inspect --format='{{json .Config.Labels}}' dti-registro.unilab.edu.br/unilab/painelplanejamento:latest | jq .
+#   docker inspect --format='{{json .Config.Labels}}' dti-registro.unilab.edu.br/unilab/painelplanunilab:latest | jq .
 #
-# Dependencies: node:14 / nginx:1.24
+# Dependencies: node:lts / nginx:1.24
 #
 # Environment variables:
 #
@@ -29,8 +29,8 @@
 #
 # Version: 1.0
 
-# step of compilação
-FROM node:14 as build
+# Step of compilation
+FROM node:lts-bullseye as build
 WORKDIR /app
 COPY package*.json ./
 
@@ -38,11 +38,17 @@ COPY . .
 RUN npm ci
 RUN npm run build
 
-# step of produção
+# Step of production
 FROM nginx:1.24-bullseye
+
+ARG COMMIT_SHA
+ARG VERSION
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
   software-properties-common \
+  openssh-server \
+  unzip \
+  jq \
   nano \
   wget \
   curl \
@@ -50,14 +56,20 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
   rsync \
   telnet \
   iputils-ping \
-  openssh-server \
   && rm -rf /var/lib/apt/lists/*
 
-# user to only debugs
+# Setup vault
+ENV VAULT_ADDR=http://dti-vault.unilab.edu.br
+RUN curl -o vault.zip -k https://releases.hashicorp.com/vault/1.13.3/vault_1.13.3_linux_amd64.zip; yes | unzip vault.zip \
+  && mv vault /usr/local/bin/ && rm vault.zip
+RUN curl -sL -o vaultenv https://github.com/channable/vaultenv/releases/download/v0.15.1/vaultenv-0.15.1-linux-musl \
+  && mv vaultenv /usr/local/bin/ && chmod +x /usr/local/bin/vaultenv
+
+# User to only debugs
 RUN adduser --disabled-password --shell /bin/bash --gecos "User DevOps" --force-badname admin \
   && echo "admin ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# ssh setup
+# Setup ssh
 RUN sed -i "s/#Port 22/Port 22/g" /etc/ssh/sshd_config
 RUN sed -i "s/#PermitRootLogin prohibit-password/PermitRootLogin no/g" /etc/ssh/sshd_config
 RUN sed -i "s/#PasswordAuthentication yes/PasswordAuthentication no/g" /etc/ssh/sshd_config
@@ -68,13 +80,8 @@ RUN chmod 700 /home/admin/.ssh && chmod 600 /home/admin/.ssh/authorized_keys && 
 WORKDIR /usr/share/nginx/html
 COPY --from=build /app/build/ ./
 COPY config/nginx.conf /etc/nginx/conf.d/default.conf
-COPY config/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 EXPOSE 80 22
-
-ARG COMMIT_SHA
-ARG VERSION
 
 LABEL \
   org.opencontainers.image.vendor="UNILAB" \
@@ -89,5 +96,4 @@ LABEL \
   org.opencontainers.image.company="Universidade da Integracao Internacional da Lusofonia Afro-Brasileira (UNILAB)" \
   org.opencontainers.image.maintainer="DTI/Unilab"
 
-ENTRYPOINT ["/entrypoint.sh"]
-
+CMD ["/bin/bash", "-c", "service ssh restart && nginx -g 'daemon off;'"]
