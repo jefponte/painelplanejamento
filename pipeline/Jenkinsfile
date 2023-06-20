@@ -54,7 +54,6 @@ pipeline {
     DOCKER_IMAGE = "dti-registro.unilab.edu.br/unilab/${IMAGE_PREFIX_NAME}"
     DOCKER_TAG = "main"
     BUILD_NUMBER = "${env.BUILD_NUMBER}"
-    HARBOR_REGCRED = "*"
     /* Vault */
     SSH_DEV = "*"
     SSH_OPS = "*"
