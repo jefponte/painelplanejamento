@@ -75,14 +75,12 @@ pipeline {
   stages {
     stage('Iniciando CI/CD') {
       steps {
-
-        def tag = sh(returnStdout: true, script: 'git describe --tags --abbrev=0').trim()
-        env.TAG = tag ? tag : '1.0'
-        env.APP_VERSION = "${env.TAG}"
-        env.DOCKER_TAG = "${env.GIT_BRANCH.split('/')[-1]}"
-
         milestone(ordinal: null, label: "Milestone: Setup")
         script {
+          def tag = sh(returnStdout: true, script: 'git describe --tags --abbrev=0').trim()
+          env.TAG = tag ? tag : '1.0'
+          env.APP_VERSION = "${env.TAG}"
+          env.DOCKER_TAG = "${env.GIT_BRANCH.split('/')[-1]}"
           env.GIT_COMMIT = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
           currentBuild.displayName = "$BUILD_DISPLAY_NAME (${GIT_COMMIT.take(8)})"
           workspace = "$env.WORKSPACE"
