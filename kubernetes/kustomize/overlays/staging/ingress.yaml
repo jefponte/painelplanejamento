@@ -16,4 +16,3 @@ spec:
             name: painelplan-unilab
             port:
               number: 80
-              

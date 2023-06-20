@@ -22,7 +22,7 @@ spec:
           {{ .Data.data.ssh_ops }}
           {{- end }}
         vault.hashicorp.com/role: "painelplanejamento-stag-role"
-        vault.hashicorp.com/auth-path: auth/kubernetes/c1
+        vault.hashicorp.com/auth-path: auth/kubernetes/c3
     spec:
       serviceAccountName: "sa-painelplan"
       containers:
