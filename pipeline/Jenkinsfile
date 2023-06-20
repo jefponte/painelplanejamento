@@ -1,31 +1,28 @@
 #!/usr/bin/env groovy
 
-def configuration = [
-  vaultUrl: 'https://dti-vault.unilab.edu.br',
-  vaultCredentialId: 'id-painelplan-role',
-  engineVersion: 2
-]
+def getSecretsPainelPlanConfig(){
+    return [[
+        engineVersion: 2, 
+        path: 'secret/painelplanejamento/config', 
+        secretValues: [
+        [envVar: 'SSH_DEV', isRequired: false, vaultKey: 'ssh_dev'], 
+        [envVar: 'SSH_OPS', isRequired: false, vaultKey: 'ssh_ops'],
+        [envVar: 'HARBOR_REGCRED', isRequired: false, vaultKey: 'regcred'],
+        ]
+    ]]
+}
 
-def configuration_harbor = [
-  vaultUrl: 'https://dti-vault.unilab.edu.br',
-  vaultCredentialId: 'id-harbor-role',
-  engineVersion: 2
-]
-
-def secrets = [
-  [path: 'secret/painelplanejamento/config', engineVersion: 2, secretValues: [
-    [envVar: 'SSH_DEV', vaultKey: 'ssh_dev'],
-    [envVar: 'SSH_OPS', vaultKey: 'ssh_ops'],
-    [envVar: 'HARBOR_REGCRED', vaultKey: 'regcred']
-  ]],
-]
-
-def secrets_harbor = [
-  [path: 'secret/harbor/config', engineVersion: 2, secretValues: [
-    [envVar: 'HARBOR_USERNAME', vaultKey: 'usuario'],
-    [envVar: 'HARBOR_PASSWORD', vaultKey: 'senha']
-  ]],
-]
+def getSecretsHarborConfig(){
+    return [[
+        engineVersion: 2, 
+        path: 'secret/harbor/config', 
+        secretValues: [
+        [envVar: 'HARBOR_USERNAME', isRequired: false, vaultKey: 'usuario'], 
+        [envVar: 'HARBOR_PASSWORD', isRequired: false, vaultKey: 'senha'],
+        [envVar: 'HARBOR_REGCRED', isRequired: false, vaultKey: 'regcred'],
+        ]
+    ]]
+}
 
 pipeline {
   agent {
@@ -58,6 +55,12 @@ pipeline {
     DOCKER_TAG = "main"
     BUILD_NUMBER = "${env.BUILD_NUMBER}"
     HARBOR_REGCRED = "*"
+    /* Vault */
+    SSH_DEV = "*"
+    SSH_OPS = "*"
+    HARBOR_USERNAME = "*"
+    HARBOR_PASSWORD = "*"
+    HARBOR_REGCRED = "*"
     /* Gerais */
     DOCKER_BUILDKIT = 1
     TF_IN_AUTOMATION = 1
@@ -75,44 +78,89 @@ pipeline {
   stages {
     stage('Iniciando CI/CD') {
       steps {
-        milestone(ordinal: null, label: "Milestone: Setup")
         script {
+          milestone(ordinal: null, label: "Milestone: Setup")
+
           env.TAG = sh(returnStdout: true, script: 'git describe --tags --abbrev=0 2>/dev/null || echo main').trim()
           env.APP_VERSION = env.TAG
           DOCKER_TAG = "${env.GIT_BRANCH.split('/')[-1]}"
           currentBuild.displayName = "$BUILD_DISPLAY_NAME (${GIT_COMMIT.take(8)})"
           workspace = "$env.WORKSPACE"
+
+          // executar alguns comandos shell para configurar outros detalhes.
+          sh '''
+            # Instala pacotes
+            apt-get update && apt-get upgrade -y
+            apt-get install -y locales sudo curl wget postgresql-client unzip rsync procps
+
+            # Setup locale
+            DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
+            sed -i 's/# pt_BR.UTF-8 UTF-8/pt_BR.UTF-8 UTF-8/' /etc/locale.gen
+            locale-gen pt_BR.UTF-8
+            echo LANG=pt_BR.UTF-8 | tee /etc/default/locale
+            echo LC_CTYPE=pt_BR.UTF-8 | tee -a /etc/default/locale
+            echo LC_ALL=pt_BR.UTF-8 | tee -a /etc/default/locale
+            echo LANGUAGE=pt_BR:pt:en | tee -a /etc/default/locale
+
+            # Instala kubectl
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+            echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+            chmod u+x ./kubectl
+            install -o root -g root -m 0755 kubectl /usr/bin/kubectl
+            kubectl version --client -ojson
+
+            # Instala Vault
+            curl -o vault.zip -k https://releases.hashicorp.com/vault/1.12.1/vault_1.12.1_linux_amd64.zip; yes | unzip vault.zip
+            
+            ls -la source/
+            ls -la source/public
+          '''
+          withVault(configuration: [
+            engineVersion: 2, 
+            skipSslVerification: true, 
+            timeout: 60, 
+            vaultCredentialId: 'token-admin-vault-plugin', 
+            vaultUrl: 'https://dti-vault.unilab.edu.br'], 
+            vaultSecrets: getSecretsPainelPlanConfig()) {
+            withEnv([
+            "SSH_DEV=${env.SSH_DEV}",
+            "SSH_OPS=${env.SSH_OPS}",
+            "HARBOR_REGCRED=${env.HARBOR_REGCRED}"
+            ]) { 
+              withEnv([
+                  "SSH_DEV=\${SSH_DEV}",
+                  "SSH_OPS=\${SSH_OPS}",
+                  "HARBOR_REGCRED=\${HARBOR_REGCRED}"
+              ]) {
+                sh 'printenv'
+              }
+            }
+          }
+
+          withVault(configuration: [
+            engineVersion: 2, 
+            skipSslVerification: true, 
+            timeout: 60, 
+            vaultCredentialId: 'token-admin-vault-plugin', 
+            vaultUrl: 'https://dti-vault.unilab.edu.br'], 
+            vaultSecrets: getSecretsHarborConfig()) {
+            withEnv([
+            "HARBOR_USERNAME=${env.HARBOR_USERNAME}",
+            "HARBOR_PASSWORD=${env.HARBOR_PASSWORD}",
+            "HARBOR_REGCRED=${env.HARBOR_REGCRED}"
+            ]) { 
+              withEnv([
+                  "HARBOR_USERNAME=\${SSH_DEV}",
+                  "HARBOR_PASSWORD=\${SSH_OPS}",
+                  "HARBOR_REGCRED=\${HARBOR_REGCRED}"
+              ]) {
+                sh 'printenv'
+              }
+            }
+          }
+
         }
-
-        // executar alguns comandos shell para configurar outros detalhes.
-        sh '''
-          # Instala pacotes
-          apt-get update && apt-get upgrade -y
-          apt-get install -y locales sudo curl wget postgresql-client unzip rsync procps
-
-          # Setup locale
-          DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
-          sed -i 's/# pt_BR.UTF-8 UTF-8/pt_BR.UTF-8 UTF-8/' /etc/locale.gen
-          locale-gen pt_BR.UTF-8
-          echo LANG=pt_BR.UTF-8 | tee /etc/default/locale
-          echo LC_CTYPE=pt_BR.UTF-8 | tee -a /etc/default/locale
-          echo LC_ALL=pt_BR.UTF-8 | tee -a /etc/default/locale
-          echo LANGUAGE=pt_BR:pt:en | tee -a /etc/default/locale
-
-          # Instala kubectl
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
-          echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
-          chmod u+x ./kubectl
-          install -o root -g root -m 0755 kubectl /usr/bin/kubectl
-          kubectl version --client -ojson
-
-          # Instala Vault
-          curl -o vault.zip -k https://releases.hashicorp.com/vault/1.12.1/vault_1.12.1_linux_amd64.zip; yes | unzip vault.zip
-          
-          ls -la source/
-          ls -la source/public
-        '''
       }
     }
     
@@ -184,26 +232,15 @@ pipeline {
     stage('Push Image Container') {
       steps {
         script {
-            container('docker') {
-                withVault([configuration: configuration_harbor, vaultSecrets: secrets_harbor]) {
-                  withEnv([
-                    "HARBOR_USERNAME=${env.HARBOR_USERNAME}",
-                    "HARBOR_PASSWORD=${env.HARBOR_PASSWORD}"
-                  ]) {
-                      
-                      milestone(ordinal: null, label: "Milestone: Docker Push")
-                      timeout(time: 15, unit: 'MINUTES') {
-                          
-                      sh """
-                        echo \${HARBOR_PASSWORD} | docker login --username \${HARBOR_USERNAME} --password-stdin https://dti-registro.unilab.edu.br
-                        docker tag \${DOCKER_IMAGE}:\${DOCKER_TAG} \${DOCKER_IMAGE}:\${TAG}
-                        docker push \${DOCKER_IMAGE}:\${TAG}
-                        unset HARBOR_PASSWORD
-                      """
-                      }
-                  }
-                }
-            
+            milestone(ordinal: null, label: "Milestone: Docker Push")
+            timeout(time: 15, unit: 'MINUTES') {
+                
+            sh """
+              echo \${HARBOR_PASSWORD} | docker login --username \${HARBOR_USERNAME} --password-stdin https://dti-registro.unilab.edu.br
+              docker tag \${DOCKER_IMAGE}:\${DOCKER_TAG} \${DOCKER_IMAGE}:\${TAG}
+              docker push \${DOCKER_IMAGE}:\${TAG}
+              unset HARBOR_PASSWORD
+            """
             }
         }
       }
@@ -212,21 +249,14 @@ pipeline {
     stage('Deploy em Staging') {
       steps {
         script {
+          sh '''
+            sed -i "s/aGFyYm9y/${HARBOR_REGCRED}/" ./kubernetes/kustomize/base/secret-regcred.yaml
+            sed -i 's/: latest/: ${env.DOCKER_TAG}/' ./kubernetes/kustomize/overlays/staging/kustomization.yaml
+            kubectl kustomize ./kubernetes/kustomize/overlays/staging > /tmp/temp-staging.yaml
+            cat /tmp/temp-staging.yaml
+          '''
 
-          withVault([configuration: configuration, vaultSecrets: secrets]) {
-            withEnv([
-              "HARBOR_REGCRED=${env.HARBOR_REGCRED}"
-            ]) {
-
-              sh '''
-                sed -i "s/aGFyYm9y/${HARBOR_REGCRED}/" ./kubernetes/kustomize/base/secret-regcred.yaml
-                sed -i 's/: latest/: ${env.DOCKER_TAG}/' ./kubernetes/kustomize/overlays/staging/kustomization.yaml
-                kubectl kustomize ./kubernetes/kustomize/overlays/staging > /tmp/temp-staging.yaml
-                cat /tmp/temp-staging.yaml
-              '''
-            }
-            sh 'printenv'
-          }
+          sh 'printenv'
 
           withKubeConfig([credentialsId: 'kubeconfig-c3', serverUrl: 'https://dti-k8s-c3.unilab.edu.br:6443']) {
             
@@ -305,20 +335,12 @@ pipeline {
       steps {
         script {
 
-          withVault([configuration: configuration, vaultSecrets: secrets]) {
-            withEnv([
-              "HARBOR_REGCRED=${env.HARBOR_REGCRED}"
-            ]) {
-
-              sh '''
-                sed -i "s/aGFyYm9y/${HARBOR_REGCRED}/" ./kubernetes/kustomize/base/secret-regcred.yaml
-                sed -i 's/: latest/: ${env.TAG}/' ./kubernetes/kustomize/overlays/production/kustomization.yaml
-                kubectl kustomize ./kubernetes/kustomize/overlays/production > /tmp/temp-production.yaml
-                cat /tmp/temp-production.yaml
-              '''
-              
-            }
-          }
+          sh '''
+            sed -i "s/aGFyYm9y/${HARBOR_REGCRED}/" ./kubernetes/kustomize/base/secret-regcred.yaml
+            sed -i 's/: latest/: ${env.TAG}/' ./kubernetes/kustomize/overlays/production/kustomization.yaml
+            kubectl kustomize ./kubernetes/kustomize/overlays/production > /tmp/temp-production.yaml
+            cat /tmp/temp-production.yaml
+          '''
 
           withKubeConfig([credentialsId: 'kubeconfig-c1', serverUrl: 'https://dti-k8s-c1.unilab.edu.br:6443']) {
 
