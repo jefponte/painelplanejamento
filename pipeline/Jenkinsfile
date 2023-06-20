@@ -55,6 +55,7 @@ pipeline {
     TAG = "v1.0.0"
     APP_VERSION = "${env.TAG}"
     DOCKER_IMAGE = "dti-registro.unilab.edu.br/unilab/${IMAGE_PREFIX_NAME}"
+    DOCKER_TAG = "main"
     BUILD_NUMBER = "${env.BUILD_NUMBER}"
     HARBOR_REGCRED = "*"
     /* Gerais */
@@ -76,8 +77,9 @@ pipeline {
       steps {
         milestone(ordinal: null, label: "Milestone: Setup")
         script {
-          env.DOCKER_TAG = sh(returnStdout: true, script: 'git describe --tags --abbrev=0 2>/dev/null || echo main').trim()
+          env.TAG = sh(returnStdout: true, script: 'git describe --tags --abbrev=0 2>/dev/null || echo main').trim()
           env.APP_VERSION = env.TAG
+          DOCKER_TAG = "${env.GIT_BRANCH.split('/')[-1]}"
           currentBuild.displayName = "$BUILD_DISPLAY_NAME (${GIT_COMMIT.take(8)})"
           workspace = "$env.WORKSPACE"
         }
