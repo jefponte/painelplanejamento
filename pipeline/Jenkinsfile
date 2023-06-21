@@ -118,7 +118,7 @@ pipeline {
             ls -la source/public
           '''
           
-          // Ler cofre
+          // Ler cofre (Vault)
           withVault(configuration: [
               engineVersion: 2,
               skipSslVerification: true,
