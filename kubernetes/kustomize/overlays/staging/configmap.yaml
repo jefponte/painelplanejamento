@@ -3,5 +3,4 @@ kind: ConfigMap
 metadata:
   name: painelplan-config
 data:
-  TZ: "America/Fortaleza"
-  VAULT_ADDR: "http://dti-vault.unilab.edu.br"
+  APP_VERSION: "1.0.0-alfa1"
