@@ -8,6 +8,7 @@ images:
   newName: dti-registro.unilab.edu.br/unilab/painelplanunilab
   newTag: latest
 patches:
+- path: configmap.yaml
 - path: deployment.yaml
 - path: service.yaml
 - path: ingress.yaml
