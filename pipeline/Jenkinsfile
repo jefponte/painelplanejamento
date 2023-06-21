@@ -27,7 +27,6 @@ pipeline {
   agent {
     kubernetes {
       yamlFile './kubernetes/agent/jenkins-agent-pod-k8s.yaml'
-      //inheritFrom 'inbound'
       idleMinutes 5
       defaultContainer 'node'
     }
@@ -55,14 +54,13 @@ pipeline {
     DOCKER_IMAGE = "dti-registro.unilab.edu.br/unilab/${IMAGE_PREFIX_NAME}"
     DOCKER_TAG = "main"
     BUILD_NUMBER = "${env.BUILD_NUMBER}"
-    GIT_COMMIT = "0"
     /* Gerais */
     DOCKER_BUILDKIT = 1
     TF_IN_AUTOMATION = 1
     THREAD_COUNT = 6
     SEMGREP_TIMEOUT = "300"
     JENKINS_URL = "https://dti-jenkins.unilab.edu.br"
-    RECIPIENT_LEAD_EMAILS = "erivandoramos@unilab.edu.br" //"dti-l@unilab.edu.br"
+    RECIPIENT_LEAD_EMAILS = "erivandoramos@unilab.edu.br"
     RECIPIENT_TEAM_EMAILS = "erivandosena@gmail.com, j.pontee@gmail.com"
     VAULT_ADDR = "https://dti-vault.unilab.edu.br"
     SONAR_URL = "https://dti-sonar.unilab.edu.br"
@@ -260,7 +258,6 @@ pipeline {
       }
     }
 
-    /*
     stage('Aprovar Deploy') {
       steps {
         milestone(ordinal: 7, label: "Milestone: Approval Deploy")
@@ -315,8 +312,7 @@ pipeline {
         }
       }
     }
-    */
-    
+
     stage('Deploy Produção') {
       steps {
         milestone(ordinal: 8, label: "Milestone: Production")
@@ -343,7 +339,7 @@ pipeline {
       }
     }
   }
-  /*
+
   post{
     always {
       echo 'Processo de pipeline finalizado.'
@@ -393,6 +389,5 @@ pipeline {
     }
 
   }
-  */
-}
 
+}
