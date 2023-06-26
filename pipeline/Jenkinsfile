@@ -49,10 +49,10 @@ pipeline {
     APP_NAMESPACE_STAG = "painelplan-stag"
     INGRESS_NAME = "painelplan-unilab"
     IMAGE_PREFIX_NAME = "painelplanunilab"
-    TAG = "latest"
+    TAG = sh(returnStdout: true, script: "git describe --tags --abbrev=0").trim()
     APP_VERSION = "${env.TAG}"
     DOCKER_IMAGE = "dti-registro.unilab.edu.br/unilab/${IMAGE_PREFIX_NAME}"
-    DOCKER_TAG = "main"
+    DOCKER_TAG = "${env.GIT_BRANCH.split('/')[-1]}"
     BUILD_NUMBER = "${env.BUILD_NUMBER}"
     /* Gerais */
     DOCKER_BUILDKIT = 1
@@ -61,6 +61,7 @@ pipeline {
     SEMGREP_TIMEOUT = "300"
     JENKINS_URL = "https://dti-jenkins.unilab.edu.br"
     RECIPIENT_LEAD_EMAILS = "erivandoramos@unilab.edu.br"
+    RECIPIENT_APPROVAL_EMAILS = "erivandoramos@unilab.edu.br, jefponte@unilab.edu.br "
     RECIPIENT_TEAM_EMAILS = "erivandosena@gmail.com, j.pontee@gmail.com"
     VAULT_ADDR = "https://dti-vault.unilab.edu.br"
     SONAR_URL = "https://dti-sonar.unilab.edu.br"
@@ -72,22 +73,7 @@ pipeline {
     stage('Iniciando CI/CD') {
       steps {
         milestone(ordinal: 1, label: "Milestone: Start CI/CD")
-
-        checkout([$class: 'GitSCM',
-            extensions: [[$class: 'CleanBeforeCheckout']],
-            branches: [[name: '*/main']],
-            userRemoteConfigs: [[
-                url: "${env.REPOSITORY}",
-                credentialsId: 'gitlab-user-jenkins'
-            ]]
-        ])
-
         script {
-          env.TAG = sh(returnStdout: true, script: 'git describe --tags --abbrev=0 2>/dev/null || echo main').trim()
-          env.APP_VERSION = env.TAG
-          DOCKER_TAG = "${(env.GIT_BRANCH ?: 'origin/main').split('/')[-1]}"
-          workspace = "$env.WORKSPACE"
-          
           // executar alguns comandos shell para configurar outros detalhes.
           sh '''
             # Instala pacotes
@@ -267,7 +253,7 @@ pipeline {
             emailext (
               mimeType: 'text/html',
               subject: "🚀 Aprovar Deploy [${env.JOB_NAME}] ${currentBuild.fullDisplayName}",
-              to: "${env.RECIPIENT_LEAD_EMAILS}",
+              to: "${env.RECIPIENT_APPROVAL_EMAILS}",
               body: """
                 <p>Prezado(a) Leader</p>Existe um Continuous Deployment (CD) aguardando aprovação para produção.
                 <h3><a href='${BUILD_URL}input'><strong>Ir para APROVAÇÃO</strong></a></h3>
