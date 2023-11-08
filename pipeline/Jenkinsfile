@@ -99,9 +99,6 @@ pipeline {
 
             # Instala Vault
             curl -o vault.zip -k https://releases.hashicorp.com/vault/1.12.1/vault_1.12.1_linux_amd64.zip; yes | unzip vault.zip
-
-            ls -la source/
-            ls -la source/public
           '''
 
           // Ler cofre (Vault)
@@ -145,9 +142,7 @@ pipeline {
       steps {
         milestone(ordinal: 2, label: "Milestone: Build")
         sh '''
-          cd source/
           npm install
-          cd ..
         '''
       }
     }
@@ -156,9 +151,7 @@ pipeline {
       steps {
         milestone(ordinal: 3, label: "Milestone: Unit Tests")
         sh '''
-          cd source/
           npm test -- --passWithNoTests
-          cd ..
         '''
       }
     }
@@ -173,7 +166,7 @@ pipeline {
             def scannerHome = tool 'SonarScanner'
             def projectKey = env.SONAR_PROJECT_KEY
             withSonarQubeEnv('SonarQube') {
-              sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${projectKey} -Dsonar.sources=source/src -Dsonar.exclusions=node_modules/*,app.js,package.json,.scannerwork,.env,public/*,db/*,test/* -Dsonar.language=nodejs -Dsonar.sourceEncoding=UTF-8"
+              sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${projectKey} -Dsonar.sources=src -Dsonar.exclusions=node_modules/*,app.js,package.json,.scannerwork,.env,public/*,db/*,test/* -Dsonar.language=nodejs -Dsonar.sourceEncoding=UTF-8"
               def props = readProperties  file: '.scannerwork/report-task.txt'
               def sonarServerUrl=props['serverUrl']
               def ceTaskUrl= props['ceTaskUrl']
@@ -204,7 +197,7 @@ pipeline {
         container('docker') {
           script {
             timeout(time: 30, unit: 'MINUTES') {
-              sh "docker build -f ./Dockerfile -t '$DOCKER_IMAGE:$DOCKER_TAG' --build-arg VERSION=$APP_VERSION --build-arg COMMIT_SHA=$GIT_COMMIT --no-cache ./source/"
+              sh "docker build -f ./Dockerfile -t '$DOCKER_IMAGE:$DOCKER_TAG' --build-arg VERSION=$APP_VERSION --build-arg COMMIT_SHA=$GIT_COMMIT --no-cache ./"
               sh """
                 echo \${HARBOR_PASSWORD} | docker login --username \${HARBOR_USERNAME} --password-stdin https://dti-registro.unilab.edu.br
                 docker tag \${DOCKER_IMAGE}:\${DOCKER_TAG} \${DOCKER_IMAGE}:\${TAG}
