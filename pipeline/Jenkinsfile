@@ -2,10 +2,10 @@
 
 def getSecretsPainelPlanConfig(){
   return [[
-    engineVersion: 2, 
-    path: 'secret/painelplanejamento/config', 
+    engineVersion: 2,
+    path: 'secret/painelplanejamento/config',
     secretValues: [
-    [envVar: 'SSH_DEV', isRequired: false, vaultKey: 'ssh_dev'], 
+    [envVar: 'SSH_DEV', isRequired: false, vaultKey: 'ssh_dev'],
     [envVar: 'SSH_OPS', isRequired: false, vaultKey: 'ssh_ops'],
     [envVar: 'HARBOR_REGCRED', isRequired: false, vaultKey: 'regcred'],
     ]
@@ -14,10 +14,10 @@ def getSecretsPainelPlanConfig(){
 
 def getSecretsHarborConfig(){
   return [[
-    engineVersion: 2, 
-    path: 'secret/harbor/config', 
+    engineVersion: 2,
+    path: 'secret/harbor/config',
     secretValues: [
-    [envVar: 'HARBOR_USERNAME', isRequired: false, vaultKey: 'usuario'], 
+    [envVar: 'HARBOR_USERNAME', isRequired: false, vaultKey: 'usuario'],
     [envVar: 'HARBOR_PASSWORD', isRequired: false, vaultKey: 'senha'],
     ]
   ]]
@@ -40,7 +40,7 @@ pipeline {
       buildDiscarder(logRotator(numToKeepStr: '20'))
       disableConcurrentBuilds()
   }
-  
+
   environment {
     /* GIT */
     REPOSITORY = "http://dti-gitlab.unilab.edu.br/dti/painelplanejamento.git"
@@ -79,7 +79,7 @@ pipeline {
             # Instala pacotes
             apt-get update && apt-get upgrade -y
             apt-get install -y locales sudo curl wget unzip procps
-            
+
             # Setup locale
             DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
             sed -i 's/# pt_BR.UTF-8 UTF-8/pt_BR.UTF-8 UTF-8/' /etc/locale.gen
@@ -88,7 +88,7 @@ pipeline {
             echo LC_CTYPE=pt_BR.UTF-8 | tee -a /etc/default/locale
             echo LC_ALL=pt_BR.UTF-8 | tee -a /etc/default/locale
             echo LANGUAGE=pt_BR:pt:en | tee -a /etc/default/locale
-            
+
             # Instala kubectl
             curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
             curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
@@ -96,14 +96,11 @@ pipeline {
             chmod u+x ./kubectl
             install -o root -g root -m 0755 kubectl /usr/bin/kubectl
             kubectl version --client -ojson
-            
+
             # Instala Vault
             curl -o vault.zip -k https://releases.hashicorp.com/vault/1.12.1/vault_1.12.1_linux_amd64.zip; yes | unzip vault.zip
-            
-            ls -la source/
-            ls -la source/public
           '''
-          
+
           // Ler cofre (Vault)
           withVault(configuration: [
               engineVersion: 2,
@@ -126,9 +123,9 @@ pipeline {
             vaultUrl: 'https://dti-vault.unilab.edu.br'],
             vaultSecrets: getSecretsHarborConfig()) {
               sh "echo 'HARBOR_USERNAME:${env.HARBOR_USERNAME}' >> .env"
-              sh "echo 'HARBOR_PASSWORD:${env.HARBOR_PASSWORD}' >> .env" 
+              sh "echo 'HARBOR_PASSWORD:${env.HARBOR_PASSWORD}' >> .env"
             }
-              
+
           def envFile = readFile('.env').trim()
           def envLines = envFile.tokenize('\n')
           envLines.each { line ->
@@ -136,33 +133,29 @@ pipeline {
             def key = parts[0].trim()
             def value = parts[1]
             env."${key}" = "${value}"
-          } 
+          }
         }
       }
     }
-    
+
     stage('Build Application') {
       steps {
         milestone(ordinal: 2, label: "Milestone: Build")
         sh '''
-          cd source/
           npm install
-          cd ..
         '''
       }
     }
-    
+
     stage('Testes') {
       steps {
         milestone(ordinal: 3, label: "Milestone: Unit Tests")
         sh '''
-          cd source/
           npm test -- --passWithNoTests
-          cd ..
         '''
       }
     }
-    
+
     stage('SonarQube Analysis') {
       steps {
         milestone(ordinal: 4, label: "Milestone: SonarQube")
@@ -173,7 +166,7 @@ pipeline {
             def scannerHome = tool 'SonarScanner'
             def projectKey = env.SONAR_PROJECT_KEY
             withSonarQubeEnv('SonarQube') {
-              sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${projectKey} -Dsonar.sources=source/src -Dsonar.exclusions=node_modules/*,app.js,package.json,.scannerwork,.env,public/*,db/*,test/* -Dsonar.language=nodejs -Dsonar.sourceEncoding=UTF-8"
+              sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${projectKey} -Dsonar.sources=src -Dsonar.exclusions=node_modules/*,app.js,package.json,.scannerwork,.env,public/*,db/*,test/* -Dsonar.language=nodejs -Dsonar.sourceEncoding=UTF-8"
               def props = readProperties  file: '.scannerwork/report-task.txt'
               def sonarServerUrl=props['serverUrl']
               def ceTaskUrl= props['ceTaskUrl']
@@ -197,14 +190,14 @@ pipeline {
         }
       }
     }
-    
+
     stage('Docker Container') {
       steps {
         milestone(ordinal: 5, label: "Milestone: Docker")
         container('docker') {
           script {
             timeout(time: 30, unit: 'MINUTES') {
-              sh "docker build -f ./Dockerfile -t '$DOCKER_IMAGE:$DOCKER_TAG' --build-arg VERSION=$APP_VERSION --build-arg COMMIT_SHA=$GIT_COMMIT --no-cache ./source/"
+              sh "docker build -f ./Dockerfile -t '$DOCKER_IMAGE:$DOCKER_TAG' --build-arg VERSION=$APP_VERSION --build-arg COMMIT_SHA=$GIT_COMMIT --no-cache ./"
               sh """
                 echo \${HARBOR_PASSWORD} | docker login --username \${HARBOR_USERNAME} --password-stdin https://dti-registro.unilab.edu.br
                 docker tag \${DOCKER_IMAGE}:\${DOCKER_TAG} \${DOCKER_IMAGE}:\${TAG}
@@ -216,7 +209,7 @@ pipeline {
         }
       }
     }
-    
+
     stage('Deploy em Staging') {
       steps {
         milestone(ordinal:6, label: "Milestone: Staging")
@@ -332,7 +325,7 @@ pipeline {
     always {
       echo 'Processo de pipeline finalizado.'
     }
-    
+
     success {
       echo 'Processo de pipeline BEM-SUCEDIDO.'
       emailext (
