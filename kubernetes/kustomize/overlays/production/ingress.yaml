@@ -4,7 +4,7 @@ metadata:
   name: painelplan-unilab
 spec:
   rules:
-  - host: dti-app-test-c1.unilab.edu.br
+  - host: painelplanejamento-staging.unilab.edu.br
     http:
       paths:
       - pathType: Prefix
