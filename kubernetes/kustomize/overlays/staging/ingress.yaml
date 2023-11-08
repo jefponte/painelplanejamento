@@ -6,7 +6,7 @@ metadata:
     haproxy.org/rewrite-target: /$1
 spec:
   rules:
-  - host: dti-app-test-c3.unilab.edu.br
+  - host: painelplanejamento-staging.unilab.edu.br
     http:
       paths:
       - pathType: Prefix
