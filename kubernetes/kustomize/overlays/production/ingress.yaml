@@ -4,7 +4,7 @@ metadata:
   name: painelplan-unilab
 spec:
   rules:
-  - host: painelplanejamento-staging.unilab.edu.br
+  - host: painelplanejamento.unilab.edu.br
     http:
       paths:
       - pathType: Prefix
