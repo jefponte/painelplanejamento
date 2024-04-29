@@ -39,7 +39,14 @@ export default function GridPanel() {
   useEffect(() => {
     fetchData(setGoals);
   }, []);
+  const parseNumber =  (strValue) => {
+    if(strValue === null || strValue === undefined || strValue === "") {
+      return 0;
+    }
+    const numericValueStr = strValue.replace(",", ".");
+    return numericValueStr;
 
+  }
   return (
     <Box sx={{ height: 450, width: '100%' }}>
       <Modal
@@ -59,9 +66,9 @@ export default function GridPanel() {
             {selectedGoal?.descricao}
           </Typography>
           <MenuList>
-            
-            <LinearProgressWithLabel value={parseInt(selectedGoal?.percentual)}/>
-            
+
+            <LinearProgressWithLabel value={parseNumber(selectedGoal?.percentualGeralAlcancado)}/>
+
             <Divider />
             <Link to={`/meta/${selectedGoal?.id}`}>
               <MenuItem>
@@ -72,7 +79,7 @@ export default function GridPanel() {
               </MenuItem>
             </Link>
           </MenuList>
-          
+
 
         </Box>
       </Modal>
