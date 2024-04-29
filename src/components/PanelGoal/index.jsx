@@ -21,6 +21,14 @@ export default function PanelGoal(props) {
       </>
     );
   }
+  const parseNumber =  (strValue) => {
+    if(strValue === null || strValue === undefined || strValue === "") {
+      return 0;
+    }
+    const numericValueStr = strValue.replace(",", ".");
+    return numericValueStr;
+
+  }
   return (
     <Box sx={{ minWidth: 275 }}>
       <br />
@@ -89,7 +97,10 @@ export default function PanelGoal(props) {
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
                 Descricao: {goal?.descricaoIndicador}
               </Typography>
-              <LinearProgressWithLabel value={parseInt(goal?.percentual)} />
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                Percentual Geral Alcançado
+              </Typography>
+              <LinearProgressWithLabel value={parseNumber(goal?.percentualGeralAlcancado)} />
             </CardContent>
           </Card>
         </Grid>
