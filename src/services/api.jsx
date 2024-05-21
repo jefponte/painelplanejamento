@@ -6,7 +6,7 @@ export const columns = [
   { field: 'id', headerName: "ID", width: 100 },
   { field: 'unidadeResponsavel', headerName: "Unidade Responsável", width: 200 },
   { field: 'classificacaoObjetivo', headerName: "Classificação do Objetivo", width: 200 },
-  { field: 'objetivo', headerName: "objetivo", width: 200 },
+  { field: 'objetivo', headerName: "Objetivo", width: 200 },
   { field: 'descricaoMetaTotal', headerName: "Descrição da Metal Total", width: 250  },
   { field: 'categoriaIndicador', headerName: "Categoria do Indicador", width: 250  },
   { field: 'meta2023', headerName: "Meta 2023", width: 250 },

@@ -21,6 +21,14 @@ export default function PanelGoal(props) {
       </>
     );
   }
+  const parseNumber =  (strValue) => {
+    if(strValue === null || strValue === undefined || strValue === "") {
+      return 0;
+    }
+    const numericValueStr = strValue.replace(",", ".");
+    return numericValueStr;
+
+  }
   return (
     <Box sx={{ minWidth: 275 }}>
       <br />
@@ -29,20 +37,17 @@ export default function PanelGoal(props) {
           <Card>
             <CardContent>
               <Typography variant="h5" component="div">
-                Meta institucional: Nº{goal?.id}
+                ID: Nº{goal?.id}
               </Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                {goal?.descricao}
-              </Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Prazo: {goal?.prazo}
-              </Typography>
+
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
                 Unidade Responsável: {goal?.unidadeResponsavel}
               </Typography>
+
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Unidade co-responsável: {goal?.unidadeCoResponsavel}
+                Objetivo: {goal?.objetivo}
               </Typography>
+
               <Link href="/" underline="hover">
                 Retornar ao Painel
               </Link>
@@ -58,10 +63,10 @@ export default function PanelGoal(props) {
           <Card>
             <CardContent>
               <Typography variant="h5" component="div">
-                Objetivo
+                Descrição da Meta
               </Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                {goal?.objetivo}
+            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                {goal?.descricaoMetaTotal}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
                 Classificação: {goal?.classificacaoObjetivo}
@@ -78,18 +83,18 @@ export default function PanelGoal(props) {
                 Indicador
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Classificação:  {goal?.classificacaoIndicador}
+                Resultados Esperado: {goal?.meta2023}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Categoria: {goal?.categoriaIndicador}
+                Resultados Alcançados: {goal?.percentualAlcancado2023}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Tipo: {goal?.tipoIndicador}
+                Percentual Geral Alcançado
               </Typography>
+              <LinearProgressWithLabel value={parseNumber(goal?.percentualGeralAlcancado)} />
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Descricao: {goal?.descricaoIndicador}
+                Justificativa para o não alcance: {goal?.justificativaNaoAlcanceMeta}
               </Typography>
-              <LinearProgressWithLabel value={parseInt(goal?.percentual)} />
             </CardContent>
           </Card>
         </Grid>
